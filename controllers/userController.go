@@ -17,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
@@ -84,7 +83,8 @@ func Signup() gin.HandlerFunc {
 		user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.ID = primitive.NewObjectID()
-		user.User_ID = user.ID.Hex()
+		temp := user.ID.Hex()
+		user.User_ID = &temp
 		token, refreshToken, tokenError := helper.GenerateAllTokens(*user.Email, *user.FirstName, *user.LastName, *user.User_type, *user.User_ID)
 
 		if tokenError != nil {
